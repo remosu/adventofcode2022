@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
 class CraneStacks
-  def initialize(path)
+  def initialize(path, crate_mover: 9000)
     @lines = File.readlines(path, chomp: true)
     @stacks = []
+    @crate_mover = crate_mover
   end
 
   def cranes_at_top
@@ -30,14 +31,19 @@ class CraneStacks
     return unless line
 
     quantity, from, to = line.scan(/\d+/).map(&:to_i)
-    quantity.times do
-      @stacks[to - 1].append(@stacks[from - 1].pop)
+    case @crate_mover
+    when 9000
+      quantity.times do
+        @stacks[to - 1].append(@stacks[from - 1].pop)
+      end
+    when 9001
+      @stacks[to - 1].concat(@stacks[from - 1].pop(quantity))
     end
 
     process_move(position + 1)
   end
 end
 
-crane_stacks = CraneStacks.new("input")
+crane_stacks = CraneStacks.new("input", crate_mover: 9001)
 
 crane_stacks.cranes_at_top
