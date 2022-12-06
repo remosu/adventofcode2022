@@ -2,11 +2,9 @@
 
 
 def characters_before_first_marker(datastream_buffer, size: 4)
-  i = 0
-  until datastream_buffer[i...i + size].chars.uniq.count == size
-    i += 1
+  datastream_buffer.chars.each_index do |i|
+    return i + size if datastream_buffer[i...i + size].chars.uniq.count == size
   end
-  i + size
 end
 
 datastream_buffer = File.read("input").chomp
