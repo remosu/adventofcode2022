@@ -1,49 +1,49 @@
 #!/usr/bin/env ruby
 
 class CraneStacks
-  def initialize(path, crate_mover: 9000)
-    @lines = File.readlines(path, chomp: true)
+  def initialize(path)
     @stacks = []
-    @crate_mover = crate_mover
+    @input_file = File.open(path)
   end
 
   def cranes_at_top
-    process_stacks_row_at(0)
+    build_stacks
+    read_line # empty line
+    execute_moves
+
     p @stacks.map(&:last).join
   end
 
   private
 
-  def process_stacks_row_at(position)
-    line = @lines[position]
-    return process_move(position + 2) if line.start_with?(" 1")
-
-    line.chars.each_with_index.filter_map { |c, i| [(i - 1) / 4, c] if ("A".."Z").include?(c) }.each do |i, v|
-      @stacks[i] ||= []
-      @stacks[i].prepend(v)
+  def build_stacks
+    line = read_line
+    until line.start_with?(" 1")
+      line.length/4
+      ((line.length + 1) / 4).times.filter_map { |i| v = line[4 * i + 1]; [i, v] if v != " " }.each do |i, v|
+        @stacks[i] ||= []
+        @stacks[i].prepend(v)
+      end
+      line = read_line
     end
-
-    process_stacks_row_at(position + 1)
   end
 
-  def process_move(position)
-    line = @lines[position]
-    return unless line
+  def execute_moves
+    line = read_line
 
-    quantity, from, to = line.scan(/\d+/).map(&:to_i)
-    case @crate_mover
-    when 9000
-      quantity.times do
-        @stacks[to - 1].append(@stacks[from - 1].pop)
-      end
-    when 9001
+    while line
+      quantity, from, to = line.scan(/\d+/).map(&:to_i)
       @stacks[to - 1].concat(@stacks[from - 1].pop(quantity))
-    end
 
-    process_move(position + 1)
+      line = read_line
+    end
+  end
+
+  def read_line
+    @input_file.gets&.chomp
   end
 end
 
-crane_stacks = CraneStacks.new("input", crate_mover: 9001)
+crane_stacks = CraneStacks.new("input")
 
 crane_stacks.cranes_at_top
