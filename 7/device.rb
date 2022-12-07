@@ -31,7 +31,22 @@ class Device
         end
       end
     end
-    p @root_dir.all_dirs.select { |d| d.size <= 100000 }.map(&:size).sum
+  end
+
+  def total_size_of_at_most(total_size)
+    @root_dir
+      .all_dirs
+      .select { |d| d.size <= total_size }
+      .map(&:size)
+      .sum
+  end
+
+  def space_to_free
+    @root_dir
+      .all_dirs
+      .select { |d| d.size >= 30000000 - (70000000 - @root_dir.size) }
+      .min_by(&:size)
+      .size
   end
 end
 
@@ -89,3 +104,6 @@ end
 device = Device.new
 
 device.load("input")
+
+p device.total_size_of_at_most(100000)
+p device.space_to_free
