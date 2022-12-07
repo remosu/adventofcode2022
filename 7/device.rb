@@ -12,24 +12,21 @@ class Device
       input, *output = command
       case input.split
       in ["cd", directory_name]
-        case directory_name
-        when "/"
-          @current_dir = @root_dir
-        when ".."
-          @current_dir = @current_dir.parent
-        else
-          @current_dir = @current_dir.find(directory_name)
-        end
+        cd(directory_name)
       in["ls"]
-        output.each do |line|
-          case line.split
-          in ["dir", directory_name]
-            @current_dir.add_directory(directory_name)
-          in [size, file_name]
-            @current_dir.add_file(file_name, size.to_i)
-          end
-        end
+        update_directory_from(output)
       end
+    end
+  end
+
+  def cd(directory_name)
+    case directory_name
+    when "/"
+      @current_dir = @root_dir
+    when ".."
+      @current_dir = @current_dir.parent
+    else
+      @current_dir = @current_dir.find(directory_name)
     end
   end
 
@@ -39,6 +36,17 @@ class Device
       .select { |d| d.size <= total_size }
       .map(&:size)
       .sum
+  end
+
+  def update_directory_from(ls_output)
+    ls_output.each do |line|
+      case line.split
+      in ["dir", directory_name]
+        @current_dir.add_directory(directory_name)
+      in [size, file_name]
+        @current_dir.add_file(file_name, size.to_i)
+      end
+    end
   end
 
   def space_to_free
