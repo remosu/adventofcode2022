@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
 
 class Device
-  def initialize
+  def initialize(file_name)
     @root_dir = Dir.new("/")
     @current_dir = @root_dir
-  end
 
-  def load(file_name)
     commands = File.read(file_name).split("$ ").map { |v| v.split("\n") }[1..]
     commands.each do |command|
       input, *output = command
@@ -109,9 +107,7 @@ class XFile
   end
 end
 
-device = Device.new
-
-device.load("input")
+device = Device.new("input")
 
 p device.total_size_of_at_most(100000)
 p device.space_to_free
