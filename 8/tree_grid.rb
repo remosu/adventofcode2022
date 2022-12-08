@@ -9,7 +9,6 @@ b = []
 l = -1
 r = []
 
-n = 0
 v = Set.new
 
 File.new('input').each_char do |c|
@@ -26,17 +25,15 @@ File.new('input').each_char do |c|
 
     if c > t[j]
       t[j] = c
-      n += 1
       v.add([i, j])
     end
 
     if c > l
       l = c
-      n += 1
       v.add([i, j])
     end
 
-    b[j].delete_if { |x, _| x <= c}
+    b[j].delete_if { |x, _| x <= c }
     b[j] << [c, [i, j]]
 
     r.delete_if { |x, _| x <= c }
@@ -46,7 +43,6 @@ File.new('input').each_char do |c|
   end
 end
 
-n += b.map(&:count).sum
 b.each do |x|
   x.each { |_, p| v.add(p) }
 end
