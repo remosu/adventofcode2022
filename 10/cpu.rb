@@ -5,6 +5,7 @@ class CPU
     @cycles = 0
     @x = 1
     @signal_strengths = []
+    @pixel_position = 0
   end
 
   def run(file_name)
@@ -36,6 +37,21 @@ class CPU
   def tic
     @cycles += 1
     @signal_strengths << @cycles * @x if ((@cycles - 20) % 40).zero?
+    render_pixel
+  end
+
+  def render_pixel
+    if (@pixel_position - @x).abs <= 1
+      print '#'
+    else
+      print '.'
+    end
+    if @pixel_position == 39
+      @pixel_position = 0
+      print "\n"
+    else
+      @pixel_position += 1
+    end
   end
 end
 
